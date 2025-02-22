@@ -8,24 +8,25 @@
 
     android:background="#000000"
     >
-    <include
-        layout="@layout/stat_text_field"
+    <com.example.mobilecheckers.customComponents.StatTextField
         android:id="@+id/playerWinsText"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-    </include>
-    <include
-        layout="@layout/stat_text_field"
+        android:layout_height="wrap_content"
+        app:textFieldText="Количество побед">
+    </com.example.mobilecheckers.customComponents.StatTextField>
+    <com.example.mobilecheckers.customComponents.StatTextField
         android:id="@+id/playerLoseText"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-    </include>
-    <include
-        layout="@layout/stat_text_field"
+        android:layout_height="wrap_content"
+        app:textFieldText="Количество поражений">
+    </com.example.mobilecheckers.customComponents.StatTextField>
+    <com.example.mobilecheckers.customComponents.StatTextField
         android:id="@+id/playerMeanMovesText"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        app:textFieldText="Среднее количество ходов"
+        >
 
-    </include>
+    </com.example.mobilecheckers.customComponents.StatTextField>
 
 </LinearLayout>

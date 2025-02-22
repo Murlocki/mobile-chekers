@@ -6,32 +6,32 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     >
-    <include
-        layout="@layout/stat_text_field"
+    <com.example.mobilecheckers.customComponents.StatTextField
         android:id="@+id/playerMoveText"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-    </include>
-    <include
-        layout="@layout/stat_text_field"
+        android:layout_height="wrap_content"
+        app:textFieldText="Ход игрока"
+        >
+    </com.example.mobilecheckers.customComponents.StatTextField>
+    <com.example.mobilecheckers.customComponents.StatTextField
         android:id="@+id/playerMoveCountText"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-    </include>
-    <include
-        layout="@layout/stat_text_field"
+        android:layout_height="wrap_content"
+        app:textFieldText="Количество ходов">
+    </com.example.mobilecheckers.customComponents.StatTextField>
+    <com.example.mobilecheckers.customComponents.StatTextField
         android:id="@+id/whiteCountText"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-    </include>
-    <include
-        layout="@layout/stat_text_field"
+        android:layout_height="wrap_content"
+        app:textFieldText="Белых осталось"
+        >
+    </com.example.mobilecheckers.customComponents.StatTextField>
+    <com.example.mobilecheckers.customComponents.StatTextField
         android:id="@+id/blackCountText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        app:textFieldText="Черных осталось"
         >
-
-    </include>
+    </com.example.mobilecheckers.customComponents.StatTextField>
 
 </LinearLayout>

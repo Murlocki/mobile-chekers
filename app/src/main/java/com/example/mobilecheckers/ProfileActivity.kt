@@ -51,9 +51,6 @@ class ProfileActivity : ComponentActivity() {
                 val navLayout: LinearLayout = view.findViewById(R.id.navPanel)
                 setupNavPanel(navLayout)
 
-                val statLayout: LinearLayout = view.findViewById(R.id.playerStat)
-                setupTextValue(statLayout)
-
                 view
             },
             modifier = modifier.fillMaxSize()
@@ -65,21 +62,5 @@ class ProfileActivity : ComponentActivity() {
             val intent: Intent = Intent(this, MainActivity::class.java)
             startActivity(intent)
         })
-    }
-
-    private fun setupTextValue(statLayout: LinearLayout){
-        val playerWins:LinearLayout = statLayout.findViewById(R.id.playerWinsText)
-        val playerWinsText: TextView = playerWins.findViewById(R.id.textField)
-        playerWinsText.text = "Количество побед"
-
-        val playerLost:LinearLayout = statLayout.findViewById(R.id.playerLoseText)
-        val playerLostText: TextView = playerLost.findViewById(R.id.textField)
-        playerLostText.text = "Количество поражений"
-
-
-        val playerMeanMoves:LinearLayout = statLayout.findViewById(R.id.playerMeanMovesText)
-        val playerMeanMovesText: TextView = playerMeanMoves.findViewById(R.id.textField)
-        playerMeanMovesText.text = "Среднее количество ходов"
-
     }
 }

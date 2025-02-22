@@ -1,4 +1,6 @@
 package com.example.mobilecheckers
+import CheckerView
+import GameViewModel
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
@@ -24,10 +26,13 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.viewinterop.AndroidView
+import androidx.lifecycle.ViewModelProvider
+import com.example.mobilecheckers.models.Checker
 import com.example.mobilecheckers.ui.theme.MobileCheckersTheme
 import kotlin.math.min
 
 class GameActivity : ComponentActivity() {
+    private lateinit var viewModel: GameViewModel
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,6 +44,14 @@ class GameActivity : ComponentActivity() {
                 }
             }
         }
+        viewModel = ViewModelProvider(this).get(GameViewModel::class.java)
+
+        if (savedInstanceState != null) {
+            val savedCheckers = savedInstanceState.getParcelableArrayList<Checker>("checkers_state")
+            savedCheckers!!.let {
+                viewModel.restoreCheckersState(it)
+            }
+        }
     }
     @RequiresApi(Build.VERSION_CODES.O)
     @Composable
@@ -48,10 +61,7 @@ class GameActivity : ComponentActivity() {
                 val inflater = LayoutInflater.from(context)
                 val view = inflater.inflate(R.layout.game_layout,null)
                 val gridLayout: GridLayout = view.findViewById(R.id.checkersBoard);
-                setupCheckersBoard(this, gridLayout)
-
-                val statLayout: LinearLayout = view.findViewById(R.id.playerStat)
-                setupTextValue(statLayout)
+                setupCheckersBoard(gridLayout)
 
                 val navLayout: LinearLayout = view.findViewById(R.id.navPanel)
                 setupNavPanel(navLayout)
@@ -61,22 +71,26 @@ class GameActivity : ComponentActivity() {
             modifier = modifier.fillMaxSize()
         )
     }
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+
+        val checkersState = viewModel.saveCheckersState()
+        outState.putParcelableArrayList("checkers_state", ArrayList(checkersState))
+    }
     @RequiresApi(Build.VERSION_CODES.O)
-    private fun setupCheckersBoard(context: Context, gridLayout: GridLayout) {
-        val size = 8 // Размер поля 8x8
-        gridLayout.removeAllViews() // Очищаем перед заполнением
+    private fun setupCheckersBoard(gridLayout: GridLayout) {
+        val size = 8
+        gridLayout.removeAllViews()
 
         gridLayout.post {
             val parentSize = min(gridLayout.width, gridLayout.height)
             val cellSize = parentSize / size
-            val buttonSize = (cellSize * 0.8).toInt() // Шашки занимают 90% ячейки
 
             for (row in 0 until size) {
                 for (col in 0 until size) {
-                    val isDarkCell = (row + col) % 2 == 1 // Только темные клетки
+                    val isDarkCell = (row + col) % 2 == 1
 
-                    // Создаем ячейку
-                    val cell = FrameLayout(context).apply {
+                    val cell = FrameLayout(this).apply {
                         layoutParams = GridLayout.LayoutParams().apply {
                             width = cellSize
                             height = cellSize
@@ -86,61 +100,29 @@ class GameActivity : ComponentActivity() {
                         setBackgroundColor(if (isDarkCell) Color.parseColor("#7C4A33") else Color.parseColor("#DDB88C"))
                     }
 
-                    // Если клетка темная и в ней должна быть шашка
-                    if (isDarkCell && (row < 3 || row > 4)) {
-                        val isWhiteChecker = row > 4 // Белые шашки внизу
+                    // Проверка, есть ли шашка на текущей клетке
+                    val checker = viewModel.checkers.value?.find { it.row == row && it.col == col }
 
-                        val checker = Button(context).apply {
-                            val buttonLayoutParams = FrameLayout.LayoutParams(buttonSize, buttonSize) // Используем FrameLayout.LayoutParams
-                            buttonLayoutParams.gravity = Gravity.CENTER // Центрируем кнопку внутри ячейки
-                            layoutParams = buttonLayoutParams // Устанавливаем параметры для кнопки
-
-                            background = ShapeDrawable(OvalShape()).apply {
-                                paint.color = if (isWhiteChecker) Color.WHITE else Color.BLACK
-                            }
-
-                            // Устанавливаем текст в зависимости от цвета шашки
-                            text = if (isWhiteChecker) "⚪" else "⚫"
-                            setTextColor(if (isWhiteChecker) Color.BLACK else Color.WHITE) // Устанавливаем контрастный цвет текста
-                            textAlignment = View.TEXT_ALIGNMENT_CENTER // Центрируем текст внутри кнопки
-                            setAutoSizeTextTypeWithDefaults(Button.AUTO_SIZE_TEXT_TYPE_UNIFORM)
-                        }
-
-                        cell.addView(checker) // Добавляем шашку в ячейку
+                    if (isDarkCell && checker != null) {
+                        val checkerView = CheckerView(this, checker) // Используем компонент для шашки
+                        checkerView.setButtonListener(View.OnClickListener {
+                            viewModel.calculatePossibleMoves(checker,viewModel.checkers.value!!,8)
+                        })
+                        cell.addView(checkerView)
                     }
 
-                    gridLayout.addView(cell) // Добавляем ячейку в поле
+                    gridLayout.addView(cell)
                 }
             }
         }
     }
-
-    private fun setupTextValue(statLayout: LinearLayout){
-        val playerMove:LinearLayout = statLayout.findViewById(R.id.playerMoveText)
-        val playerMoveText:TextView = playerMove.findViewById(R.id.textField)
-        playerMoveText.text = "Ход игрока"
-
-        val playerMoveCount:LinearLayout = statLayout.findViewById(R.id.playerMoveCountText)
-        val playerMoveCountText:TextView = playerMoveCount.findViewById(R.id.textField)
-        playerMoveCountText.text = "Количество ходов"
-
-
-        val whiteCount:LinearLayout = statLayout.findViewById(R.id.whiteCountText)
-        val whiteCountText:TextView = whiteCount.findViewById(R.id.textField)
-        whiteCountText.text = "Белых осталось"
-
-
-        val blackCount:LinearLayout = statLayout.findViewById(R.id.blackCountText)
-        val blackCountText:TextView = blackCount.findViewById(R.id.textField)
-        blackCountText.text = "Черных осталосьа"
-
-    }
-
     private fun setupNavPanel(navLayout: LinearLayout){
         val backButton: Button = navLayout.findViewById(R.id.backButton)
         backButton.setOnClickListener({
             val intent: Intent = Intent(this, MainActivity::class.java)
+            viewModel.resetCheckers()
             startActivity(intent)
         })
     }
+
 }
