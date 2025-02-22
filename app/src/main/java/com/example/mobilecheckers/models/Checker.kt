@@ -28,4 +28,12 @@ data class Checker(var row: Int, var col: Int, val isWhite: Boolean) : Parcelabl
         }
     }
 
+    override fun equals(other: Any?): Boolean {
+        if(other == null) return false
+
+        val second = other as Checker
+        return this.row == second.row && this.col == second.col
+
+    }
+
 }

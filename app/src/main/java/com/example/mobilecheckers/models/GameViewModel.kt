@@ -6,7 +6,7 @@ import kotlin.random.Random
 class GameViewModel : ViewModel() {
     val checkers = MutableLiveData<MutableList<Checker>>()
     var isPlayerWhite: Boolean = Random.nextBoolean()
-    var currentChecker: Checker? = null
+    var selectedChecker = MutableLiveData<Checker?>()
     init {
         if (checkers.value.isNullOrEmpty()) {
             loadCheckers() // Загрузим шашки, если они ещё не загружены
@@ -43,65 +43,51 @@ class GameViewModel : ViewModel() {
     fun resetCheckers(){
         checkers.value?.clear()
     }
-    fun calculatePossibleMoves(checker: Checker,checkers: MutableList<Checker>, boardSize: Int = 8): List<Pair<Int, Int>> {
+    fun selectChecker(checker: Checker?) {
+        selectedChecker.value = if (selectedChecker.value == checker || checker?.isWhite == isPlayerWhite) null else checker
+    }
+
+    fun getPossibleMovesWithHighlights(): Pair<List<Pair<Int, Int>>, List<Pair<Int, Int>>> {
+        val checker = selectedChecker.value ?: return Pair(emptyList(), emptyList())
         val possibleMoves = mutableListOf<Pair<Int, Int>>()
+        val attackMoves = mutableListOf<Pair<Int, Int>>()
 
-        // Направления для движения (вверх для белых, вниз для черных)
-        val directions = if (checker.isWhite) {
-            listOf(Pair(-1, -1), Pair(-1, 1)) // Белые двигаются вверх по диагонали
-        } else {
-            listOf(Pair(1, -1), Pair(1, 1)) // Черные двигаются вниз по диагонали
-        }
+        val directions = listOf(Pair(-1, -1), Pair(-1, 1))
 
-        // Для каждого направления проверяем клетки
+
         for ((rowOffset, colOffset) in directions) {
             val newRow = checker.row + rowOffset
             val newCol = checker.col + colOffset
-
-            // Проверяем, чтобы не выйти за пределы доски
-            if (newRow in 0 until boardSize && newCol in 0 until boardSize) {
-                // Проверяем, если клетка свободна
-                if (!isOccupied(newRow, newCol, checkers)) {
-                    possibleMoves.add(Pair(newRow, newCol))
-                }
+            if (newRow in 0 until 8 && newCol in 0 until 8 && !isOccupied(newRow, newCol)) {
+                possibleMoves.add(Pair(newRow, newCol))
             }
         }
 
-        // Теперь проверим прыжки через шашку противника (по диагонали)
-        val jumpDirections = if (checker.isWhite) {
-            listOf(Pair(-2, -2), Pair(-2, 2)) // Белые шашки могут прыгать вверх
-        } else {
-            listOf(Pair(2, -2), Pair(2, 2)) // Черные шашки могут прыгать вниз
-        }
+        val jumpDirections = listOf(Pair(-2, -2), Pair(-2, 2))
+
 
         for ((rowOffset, colOffset) in jumpDirections) {
             val newRow = checker.row + rowOffset
             val newCol = checker.col + colOffset
+            val middleRow = checker.row + rowOffset / 2
+            val middleCol = checker.col + colOffset / 2
+            val middleChecker = getCheckerAt(middleRow, middleCol)
 
-            // Проверяем, чтобы не выйти за пределы доски
-            if (newRow in 0 until boardSize && newCol in 0 until boardSize) {
-                // Проверяем, есть ли шашка противника по диагонали
-                val middleRow = checker.row + rowOffset / 2
-                val middleCol = checker.col + colOffset / 2
-                val middleChecker = getCheckerAt(middleRow, middleCol, checkers)
-
-                // Если клетка свободна и через неё можно "прыгнуть" через шашку противника
-                if (middleChecker != null && middleChecker.isWhite != checker.isWhite && !isOccupied(newRow, newCol, checkers)) {
-                    possibleMoves.add(Pair(newRow, newCol))
-                }
+            if (newRow in 0 until 8 && newCol in 0 until 8 &&
+                middleChecker != null && middleChecker.isWhite != checker.isWhite &&
+                !isOccupied(newRow, newCol)) {
+                attackMoves.add(Pair(newRow, newCol))
             }
         }
-        println(possibleMoves)
-        return possibleMoves
+
+        return Pair(possibleMoves, attackMoves)
     }
 
-    // Проверяем, есть ли шашка в указанной клетке
-    fun isOccupied(row: Int, col: Int, checkers: List<Checker>): Boolean {
-        return checkers.any { it.row == row && it.col == col }
+    private fun isOccupied(row: Int, col: Int): Boolean {
+        return checkers.value?.any { it.row == row && it.col == col } == true
     }
 
-    // Получаем шашку в указанной клетке
-    fun getCheckerAt(row: Int, col: Int, checkers: List<Checker>): Checker? {
-        return checkers.find { it.row == row && it.col == col }
+    private fun getCheckerAt(row: Int, col: Int): Checker? {
+        return checkers.value?.find { it.row == row && it.col == col }
     }
 }
