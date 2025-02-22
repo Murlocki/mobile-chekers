@@ -7,9 +7,11 @@ class GameViewModel : ViewModel() {
     val checkers = MutableLiveData<MutableList<Checker>>()
     var isPlayerWhite: Boolean = Random.nextBoolean()
     var selectedChecker = MutableLiveData<Checker?>()
+    var currentMove: List<Pair<Int, Int>> = listOf()
+    var currentAttack: List<Pair<Int, Int>> = listOf()
     init {
         if (checkers.value.isNullOrEmpty()) {
-            loadCheckers() // Загрузим шашки, если они ещё не загружены
+            loadCheckers()
         }
     }
 
@@ -19,14 +21,14 @@ class GameViewModel : ViewModel() {
         // Шашки врага
         for (row in 0..2) {
             for (col in 0 until 8 step 2) {
-                loadedCheckers.add(Checker(row, if (row % 2 == 0) col + 1 else col, isPlayerWhite))
+                loadedCheckers.add(Checker(row, if (row % 2 == 0) col + 1 else col, !isPlayerWhite))
             }
         }
 
         // Шашки игрока
         for (row in 5..7) {
             for (col in 0 until 8 step 2) {
-                loadedCheckers.add(Checker(row, if (row % 2 == 0) col + 1 else col, !isPlayerWhite))
+                loadedCheckers.add(Checker(row, if (row % 2 == 0) col + 1 else col, isPlayerWhite))
             }
         }
 
@@ -44,7 +46,11 @@ class GameViewModel : ViewModel() {
         checkers.value?.clear()
     }
     fun selectChecker(checker: Checker?) {
-        selectedChecker.value = if (selectedChecker.value == checker || checker?.isWhite == isPlayerWhite) null else checker
+        if (selectedChecker.value == checker){
+            selectedChecker.value = null
+            return
+        }
+        if(checker?.isWhite == isPlayerWhite) selectedChecker.value = checker
     }
 
     fun getPossibleMovesWithHighlights(): Pair<List<Pair<Int, Int>>, List<Pair<Int, Int>>> {
@@ -62,24 +68,7 @@ class GameViewModel : ViewModel() {
                 possibleMoves.add(Pair(newRow, newCol))
             }
         }
-
-        val jumpDirections = listOf(Pair(-2, -2), Pair(-2, 2))
-
-
-        for ((rowOffset, colOffset) in jumpDirections) {
-            val newRow = checker.row + rowOffset
-            val newCol = checker.col + colOffset
-            val middleRow = checker.row + rowOffset / 2
-            val middleCol = checker.col + colOffset / 2
-            val middleChecker = getCheckerAt(middleRow, middleCol)
-
-            if (newRow in 0 until 8 && newCol in 0 until 8 &&
-                middleChecker != null && middleChecker.isWhite != checker.isWhite &&
-                !isOccupied(newRow, newCol)) {
-                attackMoves.add(Pair(newRow, newCol))
-            }
-        }
-
+        this.currentMove = possibleMoves
         return Pair(possibleMoves, attackMoves)
     }
 
@@ -89,5 +78,15 @@ class GameViewModel : ViewModel() {
 
     private fun getCheckerAt(row: Int, col: Int): Checker? {
         return checkers.value?.find { it.row == row && it.col == col }
+    }
+    fun moveChecker(newRow: Int, newCol: Int) {
+        selectedChecker.value?.moveChecker(newRow,newCol)
+    }
+
+    fun currentCheckerValue(): Checker? {
+        return selectedChecker.value
+    }
+    fun clearCurrentChecker(){
+        selectedChecker.value = null
     }
 }

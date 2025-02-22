@@ -7,11 +7,13 @@ import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
 import android.view.View
+import android.view.ViewGroup
 import android.widget.Button
 import android.widget.FrameLayout
 import android.widget.GridLayout
 import android.widget.LinearLayout
 import androidx.annotation.RequiresApi
+import androidx.core.view.children
 import androidx.lifecycle.ViewModelProvider
 import com.example.mobilecheckers.GameActivity
 import com.example.mobilecheckers.MainActivity
@@ -47,6 +49,10 @@ class GameController(private val gameActivity: GameActivity) {
                                 "#DDB88C"
                             )
                         )
+                    }
+
+                    cell.setOnClickListener {
+                        moveChecker(gridLayout,cell)
                     }
 
                     // Проверка, есть ли шашка на текущей клетке
@@ -115,4 +121,81 @@ class GameController(private val gameActivity: GameActivity) {
         val checkersState = viewModel.saveCheckersState()
         outState.putParcelableArrayList("checkers_state", ArrayList(checkersState))
     }
+
+    // Функция перемещения шашки на выбранную клетку
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun moveChecker(gridLayout: GridLayout,cell:FrameLayout) {
+        // Получаем координаты новой ячейки
+        val position = gridLayout.indexOfChild(cell)
+        val row = position / 8
+        val col = position % 8
+        // Если это клетка для перемещения
+        if (viewModel.currentCheckerValue() != null && viewModel.currentMove.contains(Pair(row, col))) {
+            // Получаем старые координаты шашки
+            val oldRow:Int = viewModel.currentCheckerValue()!!.row
+            val oldCol:Int = viewModel.currentCheckerValue()!!.col
+
+            //Получаем старую ячейку и старый View шашки
+            val oldCell = gridLayout.getChildAt(oldRow * 8 + oldCol) as FrameLayout
+            val checkerView = oldCell.children.first() as CheckerView// Удаляем старое представление
+            // Двигаем с анимацией
+            moveCheckerWithAnimation(checkerView,row,col,oldRow,oldCol,gridLayout,cell)
+
+
+        }
+    }
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun moveCheckerWithAnimation(
+        checkerView: CheckerView,
+        newRow: Int,
+        newCol: Int,
+        oldRow: Int,
+        oldCol: Int,
+        gridLayout: GridLayout,
+        newCell: FrameLayout
+    ) {
+        // Получаем размеры ячеек доски (предполагается, что доска квадратная)
+        val cellSize = gridLayout.width / 8
+
+        // Конечные координаты для перемещения
+        val endX = (newCol - oldCol) * cellSize.toFloat()
+        val endY = (newRow - oldRow) * cellSize.toFloat()
+        // Снимаем шашку с текущей ячейки
+        gridLayout.removeView(checkerView)
+
+        // Получаем родительский ViewGroup (это overlay, который используется для анимации)
+        val parentView = gridLayout.rootView as ViewGroup
+        val overlay = parentView.overlay
+
+        // Помещаем шашку в overlay для анимации
+        overlay.add(checkerView)
+
+        // Устанавливаем начальные координаты для анимации
+        checkerView.translationX = 0F
+        checkerView.translationY = 0F
+
+        // Запускаем анимацию, чтобы двигаться к конечным координатам
+        checkerView.animate()
+            .translationX(endX) // Абсолютная конечная позиция X
+            .translationY(endY) // Абсолютная конечная позиция Y
+            .setDuration(300)  // Длительность анимации
+            .withEndAction {
+                // После завершения анимации возвращаем шашку в GridLayout
+                overlay.remove(checkerView)
+                // Обновляем позицию шашки в модели
+                viewModel.moveChecker(newRow, newCol)
+                // Создаем новую кнопку потому что overlay пошел нахрен
+                val newCheckerView = CheckerView(gameActivity, checkerView.checker)
+                newCheckerView.setButtonListener(View.OnClickListener {
+                    viewModel.selectChecker(checkerView.checker)
+                })
+                newCell.addView(newCheckerView)
+                viewModel.clearCurrentChecker()
+            }
+            .start()
+    }
+
+
+
+
 }

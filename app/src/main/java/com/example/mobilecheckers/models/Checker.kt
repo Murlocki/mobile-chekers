@@ -36,4 +36,8 @@ data class Checker(var row: Int, var col: Int, val isWhite: Boolean) : Parcelabl
 
     }
 
+    fun moveChecker(row:Int,col:Int){
+        this.row = row;
+        this.col = col
+    }
 }
