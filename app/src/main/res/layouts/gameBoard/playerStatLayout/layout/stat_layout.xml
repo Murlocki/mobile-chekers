@@ -10,27 +10,27 @@
         android:id="@+id/playerMoveText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:textFieldText="Ход игрока"
+        app:textFieldText="@string/player_current_turn_text"
         >
     </com.example.mobilecheckers.customComponents.StatTextField>
     <com.example.mobilecheckers.customComponents.StatTextField
         android:id="@+id/playerMoveCountText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:textFieldText="Количество ходов">
+        app:textFieldText="@string/turn_count_text">
     </com.example.mobilecheckers.customComponents.StatTextField>
     <com.example.mobilecheckers.customComponents.StatTextField
         android:id="@+id/whiteCountText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:textFieldText="Белых осталось"
+        app:textFieldText="@string/while_left_text"
         >
     </com.example.mobilecheckers.customComponents.StatTextField>
     <com.example.mobilecheckers.customComponents.StatTextField
         android:id="@+id/blackCountText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:textFieldText="Черных осталось"
+        app:textFieldText="@string/black_left_text"
         >
     </com.example.mobilecheckers.customComponents.StatTextField>
 

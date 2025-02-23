@@ -6,25 +6,25 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
 
-    android:background="#000000"
+    android:background="@color/default_background_color"
     >
     <com.example.mobilecheckers.customComponents.StatTextField
         android:id="@+id/playerWinsText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:textFieldText="Количество побед">
+        app:textFieldText="@string/player_wins_text">
     </com.example.mobilecheckers.customComponents.StatTextField>
     <com.example.mobilecheckers.customComponents.StatTextField
         android:id="@+id/playerLoseText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:textFieldText="Количество поражений">
+        app:textFieldText="@string/player_loses_text">
     </com.example.mobilecheckers.customComponents.StatTextField>
     <com.example.mobilecheckers.customComponents.StatTextField
         android:id="@+id/playerMeanMovesText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:textFieldText="Среднее количество ходов"
+        app:textFieldText="@string/player_mean_turn_count_text"
         >
 
     </com.example.mobilecheckers.customComponents.StatTextField>

@@ -4,31 +4,31 @@
     xmlns:constraintLayoutTools="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#000000"
+    android:background="@color/default_background_color"
     android:orientation="vertical"
     android:gravity="center"
     >
     <androidx.cardview.widget.CardView
-        android:layout_height="150dp"
-        android:layout_width="150dp"
-        constraintLayoutTools:cardCornerRadius="100dp"
-        android:layout_marginBottom="30dp"
+        android:layout_height="@dimen/logo_height"
+        android:layout_width="@dimen/logo_width"
+        constraintLayoutTools:cardCornerRadius="@dimen/logo_corner_radius"
+        android:layout_marginBottom="@dimen/logo_margin_bottom"
         >
         <ImageView
             android:id="@+id/logo"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:src="@drawable/checker_logo"
-            android:contentDescription="Logo"
+            android:contentDescription="@string/logo_desc"
             android:scaleType="centerCrop"
-            android:background="#FFFFFF"
+            android:background="@color/default_text_color"
             />
     </androidx.cardview.widget.CardView>
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Шашки"
-        android:textColor="#FFFFFF"
-        android:textSize="26dp">
+        android:text="@string/game_title"
+        android:textColor="@color/default_text_color"
+        android:textSize="@dimen/title_text_siz">
     </TextView>
 </LinearLayout>

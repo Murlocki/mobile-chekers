@@ -41,9 +41,9 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/logo"
                 app:layout_constraintHorizontal_bias="0.5"
-                android:layout_marginTop="50dp"
-                android:layout_marginStart="8dp"
-                android:layout_marginEnd="8dp"
+                android:layout_marginTop="@dimen/main_screen_buttons_margin_top"
+                android:layout_marginStart="@dimen/main_screen_buttons_margin_start"
+                android:layout_marginEnd="@dimen/main_screen_buttons_margin_end"
                 android:orientation="horizontal">
 
                 <Button
@@ -51,9 +51,9 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="0.8"
-                    android:text="Начать играть"
-                    android:background="#FFFFFF"
-                    android:textColor="#000000"
+                    android:text="@string/start_button_text"
+                    android:background="@color/default_text_color"
+                    android:textColor="@color/default_background_color"
                     android:layout_marginEnd="8dp"
                     />
 
@@ -62,9 +62,9 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="0.8"
-                    android:text="Профиль"
+                    android:text="@string/profile_button_text"
                     android:background="@drawable/border_white"
-                    android:textColor="#FFFFFF"
+                    android:textColor="@color/default_text_color"
                     android:layout_marginStart="8dp"/>
             </LinearLayout>
 

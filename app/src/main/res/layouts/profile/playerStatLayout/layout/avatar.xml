@@ -4,35 +4,35 @@
     xmlns:constraintLayoutTools="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#000000"
+    android:background="@color/default_background_color"
     android:orientation="vertical"
     android:gravity="center"
     >
     <androidx.cardview.widget.CardView
-        android:layout_height="150dp"
-        android:layout_width="150dp"
-        constraintLayoutTools:cardCornerRadius="100dp"
-        android:layout_marginBottom="30dp"
+        android:layout_height="@dimen/profile_avatar_height"
+        android:layout_width="@dimen/profile_avatar_width"
+        constraintLayoutTools:cardCornerRadius="@dimen/profile_avatar_border_radius"
+        android:layout_marginBottom="@dimen/profile_avatar_image_margin_bottom"
         >
         <ImageView
             android:id="@+id/avatarPicture"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:src="@drawable/checker_logo"
-            android:contentDescription="Logo"
+            android:contentDescription="@string/logo_desc"
             android:scaleType="centerCrop"
-            android:background="#FFFFFF"
+            android:background="@color/default_text_color"
             />
     </androidx.cardview.widget.CardView>
     <TextView
         android:id="@+id/playerName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text = "PlayerName"
-        android:textSize="30sp"
+        android:text = "@string/default_player_name"
+        android:textSize="@dimen/profile_avatar_nickname_font_size"
         android:textAlignment="center"
-        android:background="#000000"
-        android:textColor="#FFFFFF"
-        android:layout_marginBottom="40dp">
+        android:background="@color/default_background_color"
+        android:textColor="@color/default_text_color"
+        android:layout_marginBottom="@dimen/profile_avatar_nickname_margin_bottom">
     </TextView>
 </LinearLayout>

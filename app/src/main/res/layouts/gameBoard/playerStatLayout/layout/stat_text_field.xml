@@ -4,7 +4,7 @@
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
-    android:background="#000000">
+    android:background="@color/default_background_color">
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -14,16 +14,16 @@
             android:id="@+id/textField"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Заглушка"
+            android:text="@string/default_stat_text"
             android:textSize="25sp"
-            android:textColor="#FFFFFF"/>
+            android:textColor="@color/default_text_color"/>
         <TextView
             android:id="@+id/numberField"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="0"
+            android:text="@string/default_stat_counter"
             android:textSize="25sp"
-            android:textColor="#FFFFFF"
+            android:textColor="@color/default_text_color"
             android:layout_weight="1"
             android:textAlignment="textEnd"
             />
@@ -31,7 +31,7 @@
     <View
         android:layout_width="match_parent"
         android:layout_height="4dp"
-        android:background="#FFFFFF"
+        android:background="@color/default_text_color"
         android:layout_marginBottom="10dp"/>
 
 
