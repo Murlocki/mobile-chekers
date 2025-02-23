@@ -13,7 +13,7 @@ class StatTextField @JvmOverloads constructor(
     defStyleAttr: Int = 0
 ) : LinearLayout(context, attrs, defStyleAttr) {
 
-    private val textView: TextView
+    private var textView: TextView
 
     init {
         // Подключаем XML-разметку
@@ -35,5 +35,11 @@ class StatTextField @JvmOverloads constructor(
     // Метод для изменения текста программно
     fun setTextFieldText(text: String) {
         textView.text = text
+    }
+    //Метод для изменения счетчика
+    fun setCounter(text: String){
+        textView = findViewById(R.id.numberField)
+        textView.text = text
+
     }
 }

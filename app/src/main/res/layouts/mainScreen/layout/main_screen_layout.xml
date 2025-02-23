@@ -22,8 +22,6 @@
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintVertical_bias="0.5"
             >
-
-
             <include layout="@layout/logo"
                 android:id="@+id/logo"
                 android:layout_width="wrap_content"
@@ -34,6 +32,7 @@
                 >
             </include>
             <LinearLayout
+                android:id="@id/buttonPanel"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 app:layout_constraintWidth_percent="0.9"
@@ -67,7 +66,22 @@
                     android:textColor="@color/default_text_color"
                     android:layout_marginStart="8dp"/>
             </LinearLayout>
+            <Button
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/buttonPanel"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintVertical_bias="0.5"
 
+                android:id="@+id/ratingButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:layout_constraintWidth_percent="0.5"
+                android:text="@string/rating_button"
+                android:background="@drawable/border_white"
+                android:textColor="@color/default_text_color"
+                android:layout_marginTop="8dp"/>
         </androidx.constraintlayout.widget.ConstraintLayout>
 
 

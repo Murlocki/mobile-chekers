@@ -39,7 +39,8 @@ android {
                 "src/main/res/layouts/gameBoard/boardLayout",
                 "src/main/res/layouts/gameBoard/playerStatLayout",
                 "src/main/res/layouts/profile/navigationPanel",
-                "src/main/res/layouts/profile/playerStatLayout"
+                "src/main/res/layouts/profile/playerStatLayout",
+                "src/main/res/layouts/ratingScreen",
                 )
 
 
