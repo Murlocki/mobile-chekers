@@ -1,10 +1,14 @@
 import android.content.Context
+import android.content.Intent
+import android.net.Uri
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.BaseAdapter
+import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.core.content.ContextCompat.startActivity
 import com.example.mobilecheckers.R
 import com.example.mobilecheckers.customComponents.StatTextField
 import com.example.mobilecheckers.models.Player
@@ -27,7 +31,15 @@ class PlayerAdapter(private val context: Context, private val players: List<Play
         val lossesTextView = view.findViewById<StatTextField>(R.id.lossesTextView)
         val avgMovesTextView = view.findViewById<StatTextField>(R.id.avgMovesTextView)
 
+
         val player = players[position]
+
+        val toProfileButton = view.findViewById<Button>(R.id.toProfileButton)
+        toProfileButton.setOnClickListener {
+            val intent = Intent(Intent.ACTION_RUN)
+            intent.putExtra("nickname",player.nickname)
+            context.startActivity(intent)
+        }
 
         nicknameTextView.text = player.nickname
         ratingTextView.text = "Рейтинг: ${player.rating}"

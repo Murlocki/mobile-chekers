@@ -62,5 +62,16 @@
             android:layout_height="wrap_content"
             app:textFieldText="Среднее число ходов:"
             android:textColor="@color/default_text_color"/>
+        <Button
+            android:id="@+id/toProfileButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="К профилю"
+            android:textSize="20dp"
+            android:background="@color/white"
+            android:textColor="@color/black"
+            android:paddingHorizontal="10dp">
+
+        </Button>
     </LinearLayout>
 </LinearLayout>

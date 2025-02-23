@@ -1,19 +1,11 @@
 package com.example.mobilecheckers
-import android.content.Context
 import android.content.Intent
-import android.graphics.Color
-import android.graphics.drawable.ShapeDrawable
-import android.graphics.drawable.shapes.OvalShape
 import android.os.Build
 import android.os.Bundle
-import android.view.Gravity
+import android.util.Log
 import android.view.LayoutInflater
-import android.view.View
 import android.widget.Button
-import android.widget.FrameLayout
-import android.widget.GridLayout
 import android.widget.LinearLayout
-import android.widget.TextView
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -25,7 +17,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.viewinterop.AndroidView
 import com.example.mobilecheckers.ui.theme.MobileCheckersTheme
-import kotlin.math.min
+
 
 class ProfileActivity : ComponentActivity() {
     @RequiresApi(Build.VERSION_CODES.O)
@@ -50,6 +42,9 @@ class ProfileActivity : ComponentActivity() {
 
                 val navLayout: LinearLayout = view.findViewById(R.id.navPanel)
                 setupNavPanel(navLayout)
+
+                val intent = intent
+                println(intent.getStringExtra("nickname"))
 
                 view
             },
