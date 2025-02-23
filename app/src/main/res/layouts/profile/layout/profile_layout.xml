@@ -24,8 +24,9 @@
             android:paddingVertical="4dp">
 
         </include>
-        <include
-            layout="@layout/avatar"
+        <fragment
+            tools:layout="@layout/avatar"
+            android:name="com.example.mobilecheckers.fragments.Avatar"
             android:id="@+id/avatar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -35,15 +36,16 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintVertical_bias="0.3">
 
-        </include>
-        <include
-            layout="@layout/player_stat_layout"
+        </fragment>
+        <fragment
+            tools:layout="@layout/player_stat_layout"
             android:id = "@+id/playerStat"
+            android:name="com.example.mobilecheckers.fragments.PlayerStat"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:layout_constraintStart_toStartOf="@id/navPanel"
             app:layout_constraintTop_toBottomOf="@id/avatar"
             android:layout_margin="23dp">
-        </include>
+        </fragment>
     </androidx.constraintlayout.widget.ConstraintLayout>
 </LinearLayout>

@@ -1,6 +1,7 @@
 package com.example.mobilecheckers
 import CheckerView
 import GameViewModel
+import android.app.FragmentContainer
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
@@ -27,6 +28,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.lifecycle.ViewModelProvider
 import com.example.mobilecheckers.controllers.GameController
+import com.example.mobilecheckers.fragments.CheckerBoard
 import com.example.mobilecheckers.models.Checker
 import com.example.mobilecheckers.ui.theme.MobileCheckersTheme
 import kotlin.math.min
@@ -55,6 +57,7 @@ class GameActivity : ComponentActivity() {
             factory = { context ->
                 val inflater = LayoutInflater.from(context)
                 val view = inflater.inflate(R.layout.game_layout,null)
+
                 val gridLayout: GridLayout = view.findViewById(R.id.checkersBoard);
                 this.controller.setupCheckersBoard(gridLayout)
 
