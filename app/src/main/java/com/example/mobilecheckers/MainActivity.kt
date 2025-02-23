@@ -1,8 +1,10 @@
 package com.example.mobilecheckers
 
+import DatabaseHelper
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.widget.Button
 import androidx.activity.ComponentActivity
@@ -15,6 +17,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.viewinterop.AndroidView
+import com.example.mobilecheckers.models.Player
 import com.example.mobilecheckers.ui.theme.MobileCheckersTheme
 
 class MainActivity : ComponentActivity() {

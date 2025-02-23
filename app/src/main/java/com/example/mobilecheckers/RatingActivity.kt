@@ -1,10 +1,10 @@
 package com.example.mobilecheckers
-import PlayerAdapter
+import DatabaseHelper
+import com.example.mobilecheckers.adapters.PlayerAdapter
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
-import android.view.View
 import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.ListView
@@ -46,27 +46,15 @@ class RatingActivity : ComponentActivity() {
                 val players: MutableList<Player> = ArrayList<Player>()
 
                 // Добавьте данные игроков в список
-                players.add(Player("Player1", 1,10, 5, 15.5F))
-                players.add(Player("Player2", 2,8, 7, 20.0F))
-                players.add(Player("Player2", 2,8, 7, 20.0F))
-                players.add(Player("Player2", 2,8, 7, 20.0F))
-                players.add(Player("Player2", 2,8, 7, 20.0F))
-                players.add(Player("Player2", 2,8, 7, 20.0F))
-                players.add(Player("Player2", 2,8, 7, 20.0F))
-                players.add(Player("Player2", 2,8, 7, 20.0F))
-                players.add(Player("Player2", 2,8, 7, 20.0F))
-                players.add(Player("Player2", 2,8, 7, 20.0F))
-                players.add(Player("Player2", 2,8, 7, 20.0F))
-                players.add(Player("Player2", 2,8, 7, 20.0F))
-                players.add(Player("Player2", 2,8, 7, 20.0F))
-                players.add(Player("Player2", 2,8, 7, 20.0F))
-                players.add(Player("Player2", 2,8, 7, 20.0F))
-                players.add(Player("Player2", 2,8, 7, 20.0F))
-                players.add(Player("Player2", 2,8, 7, 20.0F))
-                players.add(Player("Player2", 2,8, 7, 20.0F))
-                players.add(Player("Player2", 100,8, 7, 20.0F))
+                val dbHelper = DatabaseHelper(this)
 
 
+
+                // Получаем всех игроков из базы данных
+                val playersFromDb = dbHelper.getAllPlayers()
+                for (player in playersFromDb) {
+                    players.add(player)
+                }
 
                 val listView:ListView = view.findViewById<ListView>(R.id.lvPlayers)
                 val adapter: PlayerAdapter = PlayerAdapter(context, java.util.ArrayList(players))

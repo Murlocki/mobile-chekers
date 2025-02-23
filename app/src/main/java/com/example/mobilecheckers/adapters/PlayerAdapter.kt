@@ -1,6 +1,7 @@
+package com.example.mobilecheckers.adapters
+
 import android.content.Context
 import android.content.Intent
-import android.net.Uri
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -8,7 +9,6 @@ import android.widget.BaseAdapter
 import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.TextView
-import androidx.core.content.ContextCompat.startActivity
 import com.example.mobilecheckers.R
 import com.example.mobilecheckers.customComponents.StatTextField
 import com.example.mobilecheckers.models.Player
@@ -41,11 +41,11 @@ class PlayerAdapter(private val context: Context, private val players: List<Play
             context.startActivity(intent)
         }
 
-        nicknameTextView.text = player.nickname
+        nicknameTextView.text = "${player.nickname}@${player.id}"
         ratingTextView.text = "Рейтинг: ${player.rating}"
         winsTextView.setCounter("${player.wins}")
         lossesTextView.setCounter("${player.losses}")
-        avgMovesTextView.setCounter("${player.avgMoves}")
+        avgMovesTextView.setCounter("${player.averageMoves}")
 
         // Устанавливаем видимость деталей в зависимости от того, открыт ли элемент
         detailsLayout.visibility = if (position == expandedPosition) View.VISIBLE else View.GONE
