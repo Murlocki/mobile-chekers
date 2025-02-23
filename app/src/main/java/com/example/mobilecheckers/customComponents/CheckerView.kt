@@ -15,10 +15,16 @@ import android.view.animation.TranslateAnimation
 import android.widget.Button
 import android.widget.FrameLayout
 import androidx.annotation.RequiresApi
+import androidx.compose.ui.layout.LayoutCoordinates
+import com.example.mobilecheckers.R
+import com.example.mobilecheckers.controllers.CheckerViewController
 import com.example.mobilecheckers.models.Checker
+import com.example.mobilecheckers.ui.theme.BlackCellText
+import com.example.mobilecheckers.ui.theme.WhiteCellText
 
 @RequiresApi(Build.VERSION_CODES.O)
 class CheckerView(context: Context, val checker: Checker) : FrameLayout(context) {
+    private val checkerViewController: CheckerViewController = CheckerViewController(this)
     private var button:Button = Button(context).apply {
         val buttonLayoutParams = FrameLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT)
         layoutParams = buttonLayoutParams
@@ -27,7 +33,7 @@ class CheckerView(context: Context, val checker: Checker) : FrameLayout(context)
             paint.color = if (checker.isWhite) Color.WHITE else Color.BLACK
         }
 
-        text = if (checker.isWhite) "⚪" else "⚫"
+        text = if (checker.isWhite) WhiteCellText else BlackCellText
         setTextColor(if (checker.isWhite) Color.BLACK else Color.WHITE)
         textAlignment = View.TEXT_ALIGNMENT_CENTER
         setAutoSizeTextTypeWithDefaults(Button.AUTO_SIZE_TEXT_TYPE_UNIFORM)
@@ -42,42 +48,12 @@ class CheckerView(context: Context, val checker: Checker) : FrameLayout(context)
         this.button.setOnClickListener(clickListener)
     }
 
-    fun animateMoveSequence(toX: Float, toY: Float, onAnimationEnd: () -> Unit) {
-        val moveAnim = TranslateAnimation(0f, toX, 0f, toY).apply {
-            duration = 30000
-            interpolator = AccelerateDecelerateInterpolator()
-            fillAfter = true
-        }
-
-        val scaleUp = ScaleAnimation(1f, 1.2f, 1f, 1.2f,
-            Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f).apply {
-            duration = 15000
-            interpolator = AccelerateInterpolator()
-        }
-
-        val scaleDown = ScaleAnimation(1.2f, 1f, 1.2f, 1f,
-            Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f).apply {
-            duration = 15000
-            interpolator = DecelerateInterpolator()
-        }
-
-        val animationSet = AnimationSet(false).apply {
-            addAnimation(scaleUp)
-            addAnimation(moveAnim)
-            addAnimation(scaleDown)
-        }
-
-        animationSet.setAnimationListener(object : Animation.AnimationListener {
-            override fun onAnimationStart(animation: Animation?) {}
-
-            override fun onAnimationEnd(animation: Animation?) {
-                onAnimationEnd()
-            }
-
-            override fun onAnimationRepeat(animation: Animation?) {}
-        })
-
-        this.startAnimation(animationSet)
+    fun animateMoveSequence(coordinates: Pair<Float,Float>, onAnimationEnd: ()->Unit) {
+        this.checkerViewController.checkerViewMoveAnimation(
+            coordinates.first,
+            coordinates.second,
+            onAnimationEnd
+        )
     }
 
 }

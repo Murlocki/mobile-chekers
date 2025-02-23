@@ -8,18 +8,25 @@ import android.os.Build
 import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup
+import android.view.ViewGroupOverlay
+import android.view.ViewOverlay
 import android.widget.Button
 import android.widget.FrameLayout
 import android.widget.GridLayout
 import android.widget.LinearLayout
 import androidx.annotation.RequiresApi
+import androidx.compose.ui.graphics.toArgb
 import androidx.core.view.children
 import androidx.lifecycle.ViewModelProvider
 import com.example.mobilecheckers.GameActivity
 import com.example.mobilecheckers.MainActivity
 import com.example.mobilecheckers.R
 import com.example.mobilecheckers.models.Checker
+import com.example.mobilecheckers.ui.theme.BlackCell
+import com.example.mobilecheckers.ui.theme.WhiteCell
 import kotlin.math.min
+
+private const val s = "#7C4A33"
 
 class GameController(private val gameActivity: GameActivity) {
     private var viewModel:GameViewModel = ViewModelProvider(gameActivity).get(GameViewModel::class.java)
@@ -45,14 +52,12 @@ class GameController(private val gameActivity: GameActivity) {
                             rowSpec = GridLayout.spec(row)
                         }
                         setBackgroundColor(
-                            if (isDarkCell) Color.parseColor("#7C4A33") else Color.parseColor(
-                                "#DDB88C"
-                            )
+                            if (isDarkCell) BlackCell.toArgb() else WhiteCell.toArgb()
                         )
                     }
 
                     cell.setOnClickListener {
-                        moveChecker(gridLayout,cell)
+                        changeCheckerPosition(gridLayout,cell)
                     }
 
                     // Проверка, есть ли шашка на текущей клетке
@@ -61,9 +66,9 @@ class GameController(private val gameActivity: GameActivity) {
                     if (isDarkCell && checker != null) {
                         val checkerView =
                             CheckerView(gameActivity, checker) // Используем компонент для шашки
-                        checkerView.setButtonListener(View.OnClickListener {
+                        checkerView.setButtonListener {
                             viewModel.selectChecker(checker)
-                        })
+                        }
                         cell.addView(checkerView)
                     }
 
@@ -104,7 +109,7 @@ class GameController(private val gameActivity: GameActivity) {
 
     private fun clearHighlights() {
         for (cell in highlightedCells) {
-            cell.setBackgroundColor(Color.parseColor("#7C4A33"))
+            cell.setBackgroundColor(BlackCell.toArgb())
         }
         highlightedCells.clear()
     }
@@ -124,7 +129,7 @@ class GameController(private val gameActivity: GameActivity) {
 
     // Функция перемещения шашки на выбранную клетку
     @RequiresApi(Build.VERSION_CODES.O)
-    private fun moveChecker(gridLayout: GridLayout,cell:FrameLayout) {
+    private fun changeCheckerPosition(gridLayout: GridLayout,cell:FrameLayout) {
         // Получаем координаты новой ячейки
         val position = gridLayout.indexOfChild(cell)
         val row = position / 8
@@ -140,12 +145,12 @@ class GameController(private val gameActivity: GameActivity) {
             val checkerView = oldCell.children.first() as CheckerView// Удаляем старое представление
             // Двигаем с анимацией
             moveCheckerWithAnimation(checkerView,row,col,oldRow,oldCol,gridLayout,cell)
-
-
         }
     }
+
+    // Функция перемещения шашки с запуском анимации и реальным перемещением
     @RequiresApi(Build.VERSION_CODES.O)
-    fun moveCheckerWithAnimation(
+    private fun moveCheckerWithAnimation(
         checkerView: CheckerView,
         newRow: Int,
         newCol: Int,
@@ -170,31 +175,27 @@ class GameController(private val gameActivity: GameActivity) {
         // Помещаем шашку в overlay для анимации
         overlay.add(checkerView)
 
-        // Устанавливаем начальные координаты для анимации
-        checkerView.translationX = 0F
-        checkerView.translationY = 0F
 
         // Запускаем анимацию, чтобы двигаться к конечным координатам
-        checkerView.animate()
-            .translationX(endX) // Абсолютная конечная позиция X
-            .translationY(endY) // Абсолютная конечная позиция Y
-            .setDuration(300)  // Длительность анимации
-            .withEndAction {
-                // После завершения анимации возвращаем шашку в GridLayout
-                overlay.remove(checkerView)
-                // Обновляем позицию шашки в модели
-                viewModel.moveChecker(newRow, newCol)
-                // Создаем новую кнопку потому что overlay пошел нахрен
-                val newCheckerView = CheckerView(gameActivity, checkerView.checker)
-                newCheckerView.setButtonListener(View.OnClickListener {
-                    viewModel.selectChecker(checkerView.checker)
-                })
-                newCell.addView(newCheckerView)
-                viewModel.clearCurrentChecker()
-            }
-            .start()
+        val endAnimationCallBack = fun(){ changeRealCheckerPosition(overlay,checkerView,newRow,newCol,newCell) }
+        checkerView.animateMoveSequence(Pair(endX,endY),endAnimationCallBack)
     }
 
+    // Функция изменения реальной позиции шашки
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun changeRealCheckerPosition(overlay: ViewGroupOverlay, checkerView: CheckerView, newRow: Int, newCol: Int, newCell: FrameLayout){
+        // После завершения анимации возвращаем шашку в GridLayout
+        overlay.remove(checkerView)
+        // Обновляем позицию шашки в модели
+        viewModel.moveChecker(newRow, newCol)
+        // Создаем новую кнопку потому что overlay пошел нахрен
+        val newCheckerView = CheckerView(gameActivity, checkerView.checker)
+        newCheckerView.setButtonListener(View.OnClickListener {
+            viewModel.selectChecker(checkerView.checker)
+        })
+        newCell.addView(newCheckerView)
+        viewModel.clearCurrentChecker()
+    }
 
 
 
