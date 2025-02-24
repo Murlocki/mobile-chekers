@@ -34,7 +34,6 @@ import com.example.mobilecheckers.ui.theme.MobileCheckersTheme
 import kotlin.math.min
 
 class GameActivity : ComponentActivity() {
-    private lateinit var viewModel: GameViewModel
     private lateinit var controller:GameController;
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {

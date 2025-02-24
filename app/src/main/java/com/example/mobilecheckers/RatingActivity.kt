@@ -18,11 +18,14 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.viewinterop.AndroidView
+import com.example.mobilecheckers.controllers.RatingViewController
 import com.example.mobilecheckers.models.Player
 import com.example.mobilecheckers.ui.theme.MobileCheckersTheme
 
 
 class RatingActivity : ComponentActivity() {
+    private lateinit var ratingViewController:RatingViewController
+
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,6 +37,8 @@ class RatingActivity : ComponentActivity() {
                 }
             }
         }
+        ratingViewController = RatingViewController(this)
+        ratingViewController.resetPlayersState(savedInstanceState)
     }
     @RequiresApi(Build.VERSION_CODES.O)
     @Composable
@@ -43,36 +48,18 @@ class RatingActivity : ComponentActivity() {
                 val inflater = LayoutInflater.from(context)
                 val view = inflater.inflate(R.layout.rating_layout,null)
 
-                val players: MutableList<Player> = ArrayList<Player>()
-
-                // Добавьте данные игроков в список
-                val dbHelper = DatabaseHelper(this)
-
-
-
-                // Получаем всех игроков из базы данных
-                val playersFromDb = dbHelper.getAllPlayers()
-                for (player in playersFromDb) {
-                    players.add(player)
-                }
-
-                val listView:ListView = view.findViewById<ListView>(R.id.lvPlayers)
-                val adapter: PlayerAdapter = PlayerAdapter(context, java.util.ArrayList(players))
-                listView.adapter = adapter
+                ratingViewController.settingPlayersFromDB(view)
 
                 val navLayout: LinearLayout = view.findViewById(R.id.navPanel)
-                setupNavPanel(navLayout)
+                ratingViewController.setupNavPanel(navLayout)
 
                 view
             },
             modifier = modifier.fillMaxSize()
         )
     }
-    private fun setupNavPanel(navLayout: LinearLayout){
-        val backButton: Button = navLayout.findViewById(R.id.backButton)
-        backButton.setOnClickListener({
-            val intent: Intent = Intent(this, MainActivity::class.java)
-            startActivity(intent)
-        })
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        this.ratingViewController.savePlayersState(outState)
     }
 }

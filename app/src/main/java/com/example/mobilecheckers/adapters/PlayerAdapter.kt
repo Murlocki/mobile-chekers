@@ -20,7 +20,12 @@ class PlayerAdapter(private val context: Context, private val players: List<Play
     override fun getCount(): Int = players.size
     override fun getItem(position: Int): Any = players[position]
     override fun getItemId(position: Int): Long = position.toLong()
-
+    fun setExpandedPost(position: Int?){
+        this.expandedPosition = if(position == -1) null else position
+    }
+    fun getExpandedPost():Int{
+        return this.expandedPosition ?: -1
+    }
     override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
         val view = convertView ?: LayoutInflater.from(context).inflate(R.layout.item_player, parent, false)
 
@@ -58,4 +63,5 @@ class PlayerAdapter(private val context: Context, private val players: List<Play
 
         return view
     }
+
 }
