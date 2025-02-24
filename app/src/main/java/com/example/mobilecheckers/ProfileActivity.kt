@@ -16,10 +16,12 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.viewinterop.AndroidView
+import com.example.mobilecheckers.controllers.ProfileController
 import com.example.mobilecheckers.ui.theme.MobileCheckersTheme
 
 
 class ProfileActivity : ComponentActivity() {
+    private var profileController: ProfileController? = null;
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -31,6 +33,7 @@ class ProfileActivity : ComponentActivity() {
                 }
             }
         }
+        this.profileController = ProfileController(this)
     }
     @RequiresApi(Build.VERSION_CODES.O)
     @Composable
@@ -39,23 +42,16 @@ class ProfileActivity : ComponentActivity() {
             factory = { context ->
                 val inflater = LayoutInflater.from(context)
                 val view = inflater.inflate(R.layout.profile_layout,null)
+                this.profileController!!.setupProfileLayout(view)
 
                 val navLayout: LinearLayout = view.findViewById(R.id.navPanel)
-                setupNavPanel(navLayout)
+                this.profileController!!.setupNavPanel(navLayout)
 
-                val intent = intent
-                println(intent.getStringExtra("nickname"))
+                println(intent.getStringExtra("playerId"))
 
                 view
             },
             modifier = modifier.fillMaxSize()
         )
-    }
-    private fun setupNavPanel(navLayout: LinearLayout){
-        val backButton: Button = navLayout.findViewById(R.id.backButton)
-        backButton.setOnClickListener({
-            val intent: Intent = Intent(this, MainActivity::class.java)
-            startActivity(intent)
-        })
     }
 }

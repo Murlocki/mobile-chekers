@@ -43,6 +43,7 @@ data class Player(
             return arrayOfNulls(size)
         }
     }
+    fun getCorrectName() = "${this.nickname}@${this.id}"
 }
 
 

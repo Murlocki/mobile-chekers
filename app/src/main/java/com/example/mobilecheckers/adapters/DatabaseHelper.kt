@@ -85,14 +85,14 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
         return playerList
     }
 
-    // Получение игрока по никнейму
-    fun getPlayerByNickname(nickname: String): Player? {
+    // Получение игрока по id
+    fun getPlayerById(id: Long): Player? {
         val db = readableDatabase
         val cursor = db.query(
             TABLE_NAME,
             null,
-            "$COLUMN_NICKNAME = ?",
-            arrayOf(nickname),
+            "$COLUMN_ID = ?",
+            arrayOf(id.toString()),
             null,
             null,
             null

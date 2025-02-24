@@ -42,11 +42,11 @@ class PlayerAdapter(private val context: Context, private val players: List<Play
         val toProfileButton = view.findViewById<Button>(R.id.toProfileButton)
         toProfileButton.setOnClickListener {
             val intent = Intent(Intent.ACTION_RUN)
-            intent.putExtra("nickname",player.nickname)
+            intent.putExtra("playerId",player.id.toString())
             context.startActivity(intent)
         }
 
-        nicknameTextView.text = "${player.nickname}@${player.id}"
+        nicknameTextView.text = player.getCorrectName()
         ratingTextView.text = "Рейтинг: ${player.rating}"
         winsTextView.setCounter("${player.wins}")
         lossesTextView.setCounter("${player.losses}")
