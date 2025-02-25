@@ -32,11 +32,12 @@ class CheckerView(context: Context, val checker: Checker) : FrameLayout(context)
         background = ShapeDrawable(OvalShape()).apply {
             paint.color = if (checker.isWhite) Color.WHITE else Color.BLACK
         }
-
-        text = if (checker.isWhite) WhiteCellText else BlackCellText
-        setTextColor(if (checker.isWhite) Color.BLACK else Color.WHITE)
-        textAlignment = View.TEXT_ALIGNMENT_CENTER
-        setAutoSizeTextTypeWithDefaults(Button.AUTO_SIZE_TEXT_TYPE_UNIFORM)
+        if(checker.isQueen){
+            text = if (checker.isWhite) WhiteCellText else BlackCellText
+            setTextColor(if (checker.isWhite) Color.BLACK else Color.WHITE)
+            textAlignment = View.TEXT_ALIGNMENT_CENTER
+            setAutoSizeTextTypeWithDefaults(Button.AUTO_SIZE_TEXT_TYPE_UNIFORM)
+        }
     }
     init {
         this.button.setOnClickListener {

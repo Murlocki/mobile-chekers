@@ -5,8 +5,16 @@ import kotlin.random.Random
 
 class GameViewModel : ViewModel() {
     val checkers = MutableLiveData<MutableList<Checker>>()
-    var isPlayerWhite: Boolean = Random.nextBoolean()
     var selectedChecker = MutableLiveData<Checker?>()
+
+
+    var isPlayerWhite = MutableLiveData<Boolean>()
+    var currentPlayerTurn = MutableLiveData<Int>()
+    var currentTurnCounts = MutableLiveData<Int>()
+    var currentWhiteCounts = MutableLiveData<Int>()
+    var currentBlackCounts = MutableLiveData<Int>()
+
+
     var currentMove: List<Pair<Int, Int>> = listOf()
     var currentAttack: List<Pair<Int, Int>> = listOf()
     init {
@@ -17,22 +25,26 @@ class GameViewModel : ViewModel() {
 
     private fun loadCheckers() {
         val loadedCheckers = mutableListOf<Checker>()
-
+        isPlayerWhite.value = Random.nextBoolean()
         // Шашки врага
         for (row in 0..2) {
             for (col in 0 until 8 step 2) {
-                loadedCheckers.add(Checker(row, if (row % 2 == 0) col + 1 else col, !isPlayerWhite))
+                loadedCheckers.add(Checker(row, if (row % 2 == 0) col + 1 else col, !isPlayerWhite.value!!))
             }
         }
 
         // Шашки игрока
         for (row in 5..7) {
             for (col in 0 until 8 step 2) {
-                loadedCheckers.add(Checker(row, if (row % 2 == 0) col + 1 else col, isPlayerWhite))
+                loadedCheckers.add(Checker(row, if (row % 2 == 0) col + 1 else col, isPlayerWhite.value!!))
             }
         }
 
         checkers.value = loadedCheckers
+        currentBlackCounts.value = 12
+        currentWhiteCounts.value = 12
+        currentPlayerTurn.value = if(isPlayerWhite.value!!) 0 else 1
+        currentTurnCounts.value = 0
     }
 
     fun saveCheckersState(): List<Checker> {
@@ -50,7 +62,7 @@ class GameViewModel : ViewModel() {
             selectedChecker.value = null
             return
         }
-        if(checker?.isWhite == isPlayerWhite) selectedChecker.value = checker
+        if(checker?.isWhite == isPlayerWhite.value) selectedChecker.value = checker
     }
 
     fun getPossibleMovesWithHighlights(): Pair<List<Pair<Int, Int>>, List<Pair<Int, Int>>> {
@@ -58,7 +70,7 @@ class GameViewModel : ViewModel() {
         val possibleMoves = mutableListOf<Pair<Int, Int>>()
         val attackMoves = mutableListOf<Pair<Int, Int>>()
 
-        val directions = listOf(Pair(-1, -1), Pair(-1, 1))
+        val directions = selectedChecker.value!!.getPossibleMoves()
 
 
         for ((rowOffset, colOffset) in directions) {
@@ -76,15 +88,15 @@ class GameViewModel : ViewModel() {
         return checkers.value?.any { it.row == row && it.col == col } == true
     }
 
-    private fun getCheckerAt(row: Int, col: Int): Checker? {
-        return checkers.value?.find { it.row == row && it.col == col }
-    }
     fun moveChecker(newRow: Int, newCol: Int) {
         selectedChecker.value?.moveChecker(newRow,newCol)
     }
 
     fun currentCheckerValue(): Checker? {
         return selectedChecker.value
+    }
+    fun restoreCurrentCheckerValue(checker: Checker?){
+        this.selectedChecker.value = checker
     }
     fun clearCurrentChecker(){
         selectedChecker.value = null

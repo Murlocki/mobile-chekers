@@ -75,10 +75,11 @@ class GameController(private val gameActivity: GameActivity) {
                     gridLayout.addView(cell)
                 }
             }
+            viewModel.selectedChecker.observe(gameActivity) {
+                this.updateHighlights(gridLayout)
+            }
         }
-        viewModel.selectedChecker.observe(gameActivity) {
-            updateHighlights(gridLayout)
-        }
+
     }
     fun setupNavPanel(navLayout: LinearLayout){
         val backButton: Button = navLayout.findViewById(R.id.backButton)
@@ -91,14 +92,13 @@ class GameController(private val gameActivity: GameActivity) {
     private fun updateHighlights(gridLayout: GridLayout) {
         clearHighlights()
         val (normalMoves, attackMoves) = viewModel.getPossibleMovesWithHighlights()
-
         for ((row, col) in normalMoves) {
             val index = row * 8 + col
+            println(gridLayout.children)
             val cell = gridLayout.getChildAt(index)
             cell?.setBackgroundColor(Color.GREEN)
             highlightedCells.add(cell)
         }
-
         for ((row, col) in attackMoves) {
             val index = row * 8 + col
             val cell = gridLayout.getChildAt(index)
@@ -120,11 +120,17 @@ class GameController(private val gameActivity: GameActivity) {
             savedCheckers!!.let {
                 viewModel.restoreCheckersState(it)
             }
+            val savedCurrentChecker = bundle.getParcelable<Checker>("current_checker")
+            println(savedCurrentChecker)
+            savedCurrentChecker!!.let {
+                viewModel.restoreCurrentCheckerValue(it)
+            }
         }
     }
     fun saveCheckersState(outState: Bundle){
         val checkersState = viewModel.saveCheckersState()
         outState.putParcelableArrayList("checkers_state", ArrayList(checkersState))
+        outState.putParcelable("current_checker",viewModel.currentCheckerValue())
     }
 
     // Функция перемещения шашки на выбранную клетку
