@@ -17,5 +17,9 @@ class CheckerViewController(val checkerView: CheckerView) {
             }
             .start()
     }
+    fun checkerDeathAnimation(endCallBack: () -> Unit){
+        checkerView.animate().setDuration(300).scaleX(0F).scaleY(0F).withEndAction(endCallBack).start()
+    }
+
 
 }

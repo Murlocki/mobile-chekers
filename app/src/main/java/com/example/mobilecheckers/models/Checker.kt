@@ -61,4 +61,19 @@ data class Checker(var row: Int, var col: Int, val isWhite: Boolean,var isQueen:
             return res
         }
     }
+    fun getPossibleAttackMoves():List<Pair<Int,Int>>{
+        if(!isQueen){
+            return listOf(Pair(-1, -1), Pair(-1, 1), Pair(1, -1), Pair(1, 1))
+        }
+        else{
+            val res = mutableListOf<Pair<Int,Int>>()
+            for(i in 1..4){
+                res.add(Pair(i,i))
+                res.add(Pair(-i,i))
+                res.add(Pair(i,-i))
+                res.add(Pair(-i,-i))
+            }
+            return res
+        }
+    }
 }

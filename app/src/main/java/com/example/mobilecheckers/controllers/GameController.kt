@@ -92,18 +92,28 @@ class GameController(private val gameActivity: GameActivity) {
     private fun updateHighlights(gridLayout: GridLayout) {
         clearHighlights()
         val (normalMoves, attackMoves) = viewModel.getPossibleMovesWithHighlights()
-        for ((row, col) in normalMoves) {
-            val index = row * 8 + col
-            println(gridLayout.children)
-            val cell = gridLayout.getChildAt(index)
-            cell?.setBackgroundColor(Color.GREEN)
-            highlightedCells.add(cell)
+        if(attackMoves.isEmpty()){
+            for ((row, col) in normalMoves) {
+                val index = row * 8 + col
+                println(gridLayout.children)
+                val cell = gridLayout.getChildAt(index)
+                cell?.setBackgroundColor(Color.GREEN)
+                highlightedCells.add(cell)
+            }
         }
-        for ((row, col) in attackMoves) {
-            val index = row * 8 + col
-            val cell = gridLayout.getChildAt(index)
-            cell?.setBackgroundColor(Color.RED)
-            highlightedCells.add(cell)
+        else{
+            for ((row, col, checker) in attackMoves) {
+                val index = row * 8 + col
+                println(gridLayout.children)
+                val cell = gridLayout.getChildAt(index)
+                cell?.setBackgroundColor(Color.GREEN)
+                highlightedCells.add(cell)
+
+                val enemyIndex = checker.row * 8 + checker.col
+                val enemyCell = gridLayout.getChildAt(enemyIndex)
+                enemyCell?.setBackgroundColor(Color.RED)
+                highlightedCells.add(enemyCell)
+            }
         }
     }
 
@@ -142,29 +152,45 @@ class GameController(private val gameActivity: GameActivity) {
         val col = position % 8
         // Если это клетка для перемещения
         if (viewModel.currentCheckerValue() != null && viewModel.currentMove.contains(Pair(row, col))) {
-            // Получаем старые координаты шашки
-            val oldRow:Int = viewModel.currentCheckerValue()!!.row
-            val oldCol:Int = viewModel.currentCheckerValue()!!.col
-
-            //Получаем старую ячейку и старый View шашки
-            val oldCell = gridLayout.getChildAt(oldRow * 8 + oldCol) as FrameLayout
-            val checkerView = oldCell.children.first() as CheckerView// Удаляем старое представление
             // Двигаем с анимацией
-            moveCheckerWithAnimation(checkerView,row,col,oldRow,oldCol,gridLayout,cell)
+            moveCheckerWithAnimation(row,col,gridLayout,cell)
         }
+        // Если это клетка для перемещения
+        if (viewModel.currentCheckerValue() != null && viewModel.currentAttack.any{ it.first == row && it.second == col}) {
+            //Удаляем шашку - смертника
+            killCheckerWithAnimation(row,col,gridLayout)
+            // Двигаем с анимацией
+            moveCheckerWithAnimation(row,col,gridLayout,cell)
+        }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun killCheckerWithAnimation(row:Int, col: Int, gridLayout: GridLayout){
+        val enemyChecker = viewModel.currentAttack.find { it.first == row && it.second == col }!!.third
+        val enemyCheckerIndex = viewModel.checkers.value!!.indexOf(enemyChecker)
+        viewModel.dropCheckerAtIndex(enemyCheckerIndex)
+        viewModel.decraseRemainCount(enemyChecker.isWhite)
+        val enemyCell = gridLayout.getChildAt(enemyChecker.row * 8 + enemyChecker.col) as FrameLayout
+        val enemyCheckerView = enemyCell.children.first() as CheckerView
+        enemyCheckerView.animateDeathSequence { enemyCell.removeAllViews() }
     }
 
     // Функция перемещения шашки с запуском анимации и реальным перемещением
     @RequiresApi(Build.VERSION_CODES.O)
     private fun moveCheckerWithAnimation(
-        checkerView: CheckerView,
         newRow: Int,
         newCol: Int,
-        oldRow: Int,
-        oldCol: Int,
         gridLayout: GridLayout,
         newCell: FrameLayout
     ) {
+        // Получаем старые координаты шашки
+        val oldRow:Int = viewModel.currentCheckerValue()!!.row
+        val oldCol:Int = viewModel.currentCheckerValue()!!.col
+
+        //Получаем старую ячейку и старый View шашки
+        val oldCell = gridLayout.getChildAt(oldRow * 8 + oldCol) as FrameLayout
+        val checkerView = oldCell.children.first() as CheckerView// Удаляем старое представление
+
         // Получаем размеры ячеек доски (предполагается, что доска квадратная)
         val cellSize = gridLayout.width / 8
 
@@ -200,7 +226,14 @@ class GameController(private val gameActivity: GameActivity) {
             viewModel.selectChecker(checkerView.checker)
         })
         newCell.addView(newCheckerView)
+
+        val newAttackMoves = viewModel.getPossibleMovesWithHighlights().second
         viewModel.clearCurrentChecker()
+        if(newAttackMoves.isNotEmpty()) viewModel.selectChecker(checkerView.checker)
+        else{
+            viewModel.increaseTurnCount()
+            viewModel.changeCurrentTurn()
+        }
     }
 
 

@@ -56,5 +56,8 @@ class CheckerView(context: Context, val checker: Checker) : FrameLayout(context)
             onAnimationEnd
         )
     }
+    fun animateDeathSequence(onAnimationEnd: ()->Unit) {
+        this.checkerViewController.checkerDeathAnimation(onAnimationEnd)
+    }
 
 }
